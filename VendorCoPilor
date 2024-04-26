@@ -1,0 +1,170 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - Greetings
+      - Hello
+      - Good day sir
+      - Fine day we are having
+
+  actions:
+    - kind: SendActivity
+      id: sendActivity_wGv48t
+      activity:
+        text:
+          - Greetings Adventurer.
+        speak:
+        attachments:
+          - kind: ImageCardTemplate
+            image: {some Url}
+
+    - kind: Question
+      id: question_n1aiFt
+      interruptionPolicy:
+        allowInterruption: true
+
+      variable: init:Topic.Var1
+      prompt: What can I help with you with?
+      entity:
+        kind: ClosedListEntityReference
+        entityId: cr6dc_lootVendor.entity.Inventory
+
+    - kind: ConditionGroup
+      id: conditionGroup_uMLWi3
+      conditions:
+        - id: conditionItem_06CfcT
+          condition: =Topic.Var1 = 'cr6dc_lootVendor.entity.Inventory'.Wy40r4
+          actions:
+            - kind: SetVariable
+              id: setVariable_KGI0PP
+              variable: Topic.Price
+              value: 2
+
+            - kind: Question
+              id: question_IzX01v
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: Topic.Quantity
+              prompt: How many do you require?
+              entity: StringPrebuiltEntity
+
+            - kind: SendActivity
+              id: sendActivity_aM0FU9
+              activity: It will be {Topic.Price * Topic.Quantity} Gold my good Adventurer.
+
+            - kind: Question
+              id: question_mFrbcQ
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Global.Var2
+              prompt: You wish to pay?
+              entity:
+                kind: EmbeddedEntity
+                definition:
+                  kind: ClosedListEntity
+                  items:
+                    - id: Yes
+                      displayName: Yes
+
+                    - id: No
+                      displayName: No
+
+            - kind: ConditionGroup
+              id: conditionGroup_QvHCT2
+              conditions:
+                - id: conditionItem_8ZtgmJ
+                  condition: =Global.Var2 = 'cr6dc_lootVendor.topic.Untitled.main.question_mFrbcQ'.Yes
+                  actions:
+                    - kind: SendActivity
+                      id: sendActivity_cCxLfU
+                      activity: Thank you for your patronige. 
+
+                - id: conditionItem_9dGaWe
+                  condition: =Global.Var2 = 'cr6dc_lootVendor.topic.Untitled.main.question_mFrbcQ'.No
+
+            - kind: Question
+              id: question_bp3gz0
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.Var3
+              prompt: Anything else I can assist you with?
+              entity:
+                kind: EmbeddedEntity
+                definition:
+                  kind: ClosedListEntity
+                  items:
+                    - id: Yes
+                      displayName: Yes
+
+                    - id: No
+                      displayName: No
+
+            - kind: ConditionGroup
+              id: conditionGroup_rQzKAs
+              conditions:
+                - id: conditionItem_YEX2Go
+                  condition: =Topic.Var3 = 'cr6dc_lootVendor.topic.Untitled.main.question_bp3gz0'.Yes
+                  actions:
+                    - kind: GotoAction
+                      id: KP0sQi
+                      actionId: question_n1aiFt
+
+                - id: conditionItem_fMPUXY
+                  condition: =Topic.Var3 = 'cr6dc_lootVendor.topic.Untitled.main.question_bp3gz0'.No
+                  actions:
+                    - kind: EndConversation
+                      id: gKmEnK
+
+        - id: conditionItem_91cPhV
+          condition: =Topic.Var1 = 'cr6dc_lootVendor.entity.Inventory'.'93TCU3'
+          actions:
+            - kind: ConditionGroup
+              id: conditionGroup_129WZb
+              conditions:
+                - id: conditionItem_iJdV8o
+                  condition: =Topic.HasBookedIn = 1
+                  actions:
+                    - kind: SendActivity
+                      id: sendActivity_KAOWCY
+                      activity: You are already booked in. 
+
+                    - kind: GotoAction
+                      id: Ymlhjp
+                      actionId: question_n1aiFt
+
+            - kind: SetVariable
+              id: setVariable_PPwzOf
+              variable: Topic.HousingPrice
+              value: 10
+
+            - kind: Question
+              id: question_lhluOA
+              interruptionPolicy:
+                allowInterruption: false
+
+              variable: init:Topic.Var4
+              prompt: It will be {Topic.HousingPrice}, can I book you in?
+              entity: BooleanPrebuiltEntity
+
+            - kind: ConditionGroup
+              id: conditionGroup_wZvqFP
+              conditions:
+                - id: conditionItem_DDSDWS
+                  condition: =Topic.Var4 = true
+                  actions:
+                    - kind: SetVariable
+                      id: setVariable_aMWG2O
+                      variable: Topic.HasBookedIn
+                      value: 1
+
+                    - kind: SendActivity
+                      id: sendActivity_5iEvQJ
+                      activity: YOu are booked in.
+
+        - id: conditionItem_Y0TNXc
+          condition: =Topic.Var1 = 'cr6dc_lootVendor.entity.Inventory'.tDgau4
